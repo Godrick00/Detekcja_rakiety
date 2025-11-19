@@ -1,0 +1,6 @@
+pandas
+plotly
+moviepy
+ultralytics
+numpy
+pathlib
