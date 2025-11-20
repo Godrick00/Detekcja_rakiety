@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from pathlib import Path
 
 # ----- konfiguracja -----
-csv_path = Path("yolo_results/pose_predict/keypoints_data.csv")
+csv_path = Path("keypoints_data (2).csv")
 if not csv_path.exists():
     raise FileNotFoundError(csv_path)
 
@@ -24,6 +24,11 @@ skeleton_pairs = [
     (5, 7), (7, 9), (6, 8), (8, 10),
     (5, 6), (11, 12), (5, 11), (6, 12),
     (11, 13), (13, 15), (12, 14), (14, 16)
+]
+
+# Połączenia dla rakiety (góra i dół)
+racket_pairs = [
+    (9, 10),  # Połączenie między nadgarstkami
 ]
 
 # ----- wczytanie CSV -----
@@ -75,6 +80,14 @@ for idx, pid in enumerate(persons):
         name=f"skeleton {pid}",
         showlegend=False  # nie duplikuj legendy
     ))
+    # racket trace (linie)
+    initial_traces.append(go.Scatter(
+        x=[], y=[],
+        mode="lines",
+        line=dict(width=4, color="purple"),
+        name=f"racket {pid}",
+        showlegend=False
+    ))
 
 # ----- zbuduj frames (z danymi w tej samej kolejności co initial_traces) -----
 frames = []
@@ -116,6 +129,18 @@ for f in frame_ids:
                     y_lines += [float(ya), float(yb), None]
         frame_data.append(go.Scatter(x=x_lines, y=y_lines, mode="lines",
                                      line=dict(width=2, color=colors[persons.index(pid)]),
+                                     showlegend=False))
+        # build racket lines
+        x_racket, y_racket = [], []
+        for a, b in racket_pairs:
+            if a < N_KP and b < N_KP:
+                xa, ya = pts[a, 0], pts[a, 1]
+                xb, yb = pts[b, 0], pts[b, 1]
+                if not (np.isnan(xa) or np.isnan(ya) or np.isnan(xb) or np.isnan(yb)):
+                    x_racket += [float(xa), float(xb), None]
+                    y_racket += [float(ya), float(yb), None]
+        frame_data.append(go.Scatter(x=x_racket, y=y_racket, mode="lines",
+                                     line=dict(width=4, color="purple"),
                                      showlegend=False))
     frames.append(go.Frame(data=frame_data, name=str(f)))
 
