@@ -60,26 +60,26 @@ print(f"Liczba klatek do animacji: {len(frame_ids)}")
 # ----- przygotuj początkowe trace'y (stała liczba: 2 trace'y na osobę -> markers + skeleton lines) -----
 initial_traces = []
 for idx, pid in enumerate(persons):
-    # markers trace (pokażemy legendę tylko raz na początku)
-    initial_traces.append(go.Scatter(
-        x=[], y=[],
-        mode="markers+text",
-        text=[], textposition="top center",
-        marker=dict(size=8),
-        name=f"Person {pid}",
-        marker_symbol="circle",
-        marker_line_width=1,
-        marker_line_color="black",
-        hoverinfo="text"
-    ))
-    # skeleton trace (linie)
-    initial_traces.append(go.Scatter(
-        x=[], y=[],
-        mode="lines",
-        line=dict(width=2),
-        name=f"skeleton {pid}",
-        showlegend=False  # nie duplikuj legendy
-    ))
+    # # markers trace (pokażemy legendę tylko raz na początku)
+    # initial_traces.append(go.Scatter(
+    #     x=[], y=[],
+    #     mode="markers+text",
+    #     text=[], textposition="top center",
+    #     marker=dict(size=8),
+    #     name=f"Person {pid}",
+    #     marker_symbol="circle",
+    #     marker_line_width=1,
+    #     marker_line_color="black",
+    #     hoverinfo="text"
+    # ))
+    # # skeleton trace (linie)
+    # initial_traces.append(go.Scatter(
+    #     x=[], y=[],
+    #     mode="lines",
+    #     line=dict(width=2),
+    #     name=f"skeleton {pid}",
+    #     showlegend=False  # nie duplikuj legendy
+    # ))
     # racket trace (linie)
     initial_traces.append(go.Scatter(
         x=[], y=[],
@@ -108,28 +108,28 @@ for f in frame_ids:
                     pts[kid, 1] = float(row["y"])
                     # opcjonalny tekst: "id:kp"
                     texts[kid] = f"{pid}:{kid}"
-        # markers trace data
-        frame_data.append(go.Scatter(x=pts[:,0].tolist(),
-                                     y=pts[:,1].tolist(),
-                                     text=texts,
-                                     mode="markers+text",
-                                     textposition="top center",
-                                     marker=dict(size=8, color=colors[persons.index(pid)]),
-                                     name=f"Person {pid}",
-                                     hoverinfo="text"))
-        # build skeleton lines with None separators
-        x_lines, y_lines = [], []
-        for a,b in skeleton_pairs:
-            if a < N_KP and b < N_KP:
-                xa, ya = pts[a,0], pts[a,1]
-                xb, yb = pts[b,0], pts[b,1]
-                # tylko narysuj segment jeśli obie współrzędne nie są NaN
-                if not (np.isnan(xa) or np.isnan(ya) or np.isnan(xb) or np.isnan(yb)):
-                    x_lines += [float(xa), float(xb), None]
-                    y_lines += [float(ya), float(yb), None]
-        frame_data.append(go.Scatter(x=x_lines, y=y_lines, mode="lines",
-                                     line=dict(width=2, color=colors[persons.index(pid)]),
-                                     showlegend=False))
+        # # markers trace data
+        # frame_data.append(go.Scatter(x=pts[:,0].tolist(),
+        #                              y=pts[:,1].tolist(),
+        #                              text=texts,
+        #                              mode="markers+text",
+        #                              textposition="top center",
+        #                              marker=dict(size=8, color=colors[persons.index(pid)]),
+        #                              name=f"Person {pid}",
+        #                              hoverinfo="text"))
+        # # build skeleton lines with None separators
+        # x_lines, y_lines = [], []
+        # for a,b in skeleton_pairs:
+        #     if a < N_KP and b < N_KP:
+        #         xa, ya = pts[a,0], pts[a,1]
+        #         xb, yb = pts[b,0], pts[b,1]
+        #         # tylko narysuj segment jeśli obie współrzędne nie są NaN
+        #         if not (np.isnan(xa) or np.isnan(ya) or np.isnan(xb) or np.isnan(yb)):
+        #             x_lines += [float(xa), float(xb), None]
+        #             y_lines += [float(ya), float(yb), None]
+        # frame_data.append(go.Scatter(x=x_lines, y=y_lines, mode="lines",
+        #                              line=dict(width=2, color=colors[persons.index(pid)]),
+        #                              showlegend=False))
         # build racket lines
         x_racket, y_racket = [], []
         for a, b in racket_pairs:
@@ -159,7 +159,7 @@ fig = go.Figure(
     data=initial_traces,
     frames=frames,
     layout=go.Layout(
-        title="Dynamiczna wizualizacja wszystkich osób (Plotly)",
+        title="Dynamiczna wizualizacja rakiet (Plotly)",
         xaxis=dict(range=x_range, title="x"),
         yaxis=dict(range=y_range, title="y", autorange=False),
         width=900,
@@ -190,5 +190,5 @@ if frames:
 
 # Wyświetl i zapisz
 fig.show()
-fig.write_html("multi_person_pose_fixed.html", include_plotlyjs="cdn")
-print("Gotowe — zapisano multi_person_pose_fixed.html")
+fig.write_html("racket_only_visualization.html", include_plotlyjs="cdn")
+print("Gotowe — zapisano racket_only_visualization.html")
